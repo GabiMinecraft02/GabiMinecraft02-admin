@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Publication réussie - GabiMinecraft02 Admin</title>
+    <style>
+        body {
+            background: #1e1e2e;
+            color: white;
+            text-align: center;
+            font-family: sans-serif;
+            padding: 50px;
+        }
+        a.button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #00bfff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        a.button:hover {
+            background: #0096c7;
+        }
+    </style>
+</head>
+<body>
+    <h2>✅ Publication réussie !</h2>
+    <p>Votre image ou texte a été ajouté avec succès.</p>
+    <a href="{{ url_for('dashboard') }}" class="button">Retour au tableau de bord</a>
+</body>
+</html>
