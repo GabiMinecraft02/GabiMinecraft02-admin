@@ -8,6 +8,10 @@ UPLOAD_FOLDER = os.path.join("static", "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # --- Routes ---
+@app.route("/")
+def login():
+    return render_template("index.html")
+
 @app.route("/login")
 def login():
     return render_template("login.html")
