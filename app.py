@@ -1,54 +1,47 @@
+from flask import Flask, render_template, request, redirect, url_for
 import os
-from flask import Flask, render_template, redirect
-
-# --- Port et host dès le début ---
-PORT = int(os.environ.get("PORT", 5000))
-HOST = "0.0.0.0"
 
 app = Flask(__name__)
 
-# --- Routes principales ---
-@app.route("/")
-def home():
-    return render_template("index.html")
+# --- Dossier pour stocker les uploads ---
+UPLOAD_FOLDER = os.path.join("static", "uploads")
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-@app.route("/backup")
-def backup():
-    return render_template("backup.html")
+# --- Routes ---
+@app.route("/login")
+def login():
+    return render_template("login.html")
 
-@app.route("/advancements")
-def advancements():
-    # redirige vers ton site Advancements
-    return redirect("https://ton-domaine-advancements.onrender.com")  # change avec ton vrai URL
+@app.route("/dashboard")
+def dashboard():
+    # Liste des images
+    images = [f for f in os.listdir(UPLOAD_FOLDER) if f.lower().endswith((".png", ".jpg", ".jpeg", ".gif"))]
 
-@app.route("/youtube")
-def youtube():
-    return redirect("https://www.youtube.com/@GabiMinecraft02ps3")
+    # Lire le fichier texte
+    texts = []
+    text_file = os.path.join(UPLOAD_FOLDER, "text.txt")
+    if os.path.exists(text_file):
+        with open(text_file, "r", encoding="utf-8") as f:
+            texts = f.readlines()
 
-@app.route("/tiktok")
-def tiktok():
-    return redirect("https://www.tiktok.com/@gabiminecraft028?is_from_webapp=1&sender_device=pc")
+    return render_template("dashboard.html", images=images, texts=texts)
 
-@app.route("/snapchat")
-def snapchat():
-    return redirect("http://snapchat.com/t/sS6oPOiV")
+@app.route("/upload_image", methods=["POST"])
+def upload_image():
+    file = request.files.get("image")
+    if file and file.filename != "":
+        file.save(os.path.join(UPLOAD_FOLDER, file.filename))
+    return redirect(url_for("dashboard"))
 
-@app.route("/discord_backup")
-def discord_backup():
-    return redirect("https://discord.gg/ex8Jgrm255")
-
-@app.route("/discord_yt")
-def discord_yt():
-    return redirect("https://discord.gg/dZUEhNZWWD")
-
-@app.route("/discord_snap")
-def discord_snap():
-    return redirect("https://snapchat.com/t/NuFx4joB")
-
-@app.route("/minecraft_modding")
-def minecraft_modding():
-    return redirect("https://minecraft-ps3-moding-website.onrender.com/")
+@app.route("/upload_text", methods=["POST"])
+def upload_text():
+    text_content = request.form.get("text_content", "").strip()
+    if text_content:
+        with open(os.path.join(UPLOAD_FOLDER, "text.txt"), "a", encoding="utf-8") as f:
+            f.write(text_content + "\n")
+    return redirect(url_for("dashboard"))
 
 # --- Lancer le serveur ---
 if __name__ == "__main__":
-    app.run(host=HOST, port=PORT)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
